@@ -9,7 +9,7 @@ H="authorization: Bearer $AT"
 T=$(curl -s -X POST $B/tests -H "$H" -H 'content-type: application/json' -d '{"name":"Lipid Profile '$RANDOM'"}' | j "['id']")
 C=$(curl -s -X POST $B/centres -H "$H" -H 'content-type: application/json' -d '{"name":"EVE Central '$RANDOM'","location":"Delhi"}' | j "['id']")
 curl -s -X PUT $B/centres/$C/tests -H "$H" -H 'content-type: application/json' -d "{\"test_id\":$T,\"price\":\"750.00\"}" >/dev/null
-WHEN=$(date -u -d '+3 days' +%Y-%m-%dT%H:%M:%SZ)
+WHEN=$(date -u -v+3d +%Y-%m-%dT%H:%M:%SZ)
 BK=$(curl -s -X POST $B/bookings -H "$H" -H 'content-type: application/json' -d "{\"centre_id\":$C,\"test_id\":$T,\"appointment_at\":\"$WHEN\"}" | j "['id']")
 REF=$(curl -s -X POST $B/payments/ -H "$H" -H 'content-type: application/json' -d "{\"booking_id\":$BK,\"async_mode\":true}" | j "['provider_reference']")
 BODY="{\"event_id\":\"evt_$RANDOM\",\"provider_reference\":\"$REF\",\"status\":\"SUCCESS\"}"
